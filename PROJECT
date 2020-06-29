@@ -1,0 +1,7 @@
+domain: unstable.cloud
+repo: github.com/yuanying/zfs-operator
+resources:
+- group: zfs
+  kind: Volume
+  version: v1alpha1
+version: "2"
