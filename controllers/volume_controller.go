@@ -146,12 +146,13 @@ func (r *VolumeReconciler) findDataset(log logr.Logger, vol *zfsv1alpha1.Volume)
 		log.Error(err, msg)
 		return nil, err
 	}
-	var found *zfs.Dataset
 	for _, ds := range dss {
 		if ds.Name == vol.Spec.VolumeName {
-			return found, nil
+			log.Info("Dataset found")
+			return ds, nil
 		}
 	}
+	log.Info("Dataset not found")
 	return nil, nil
 }
 
@@ -161,6 +162,7 @@ func (r *VolumeReconciler) deleteVolume(log logr.Logger, vol *zfsv1alpha1.Volume
 		return err
 	}
 	if found != nil {
+		log.Info("Try to destroy zfs volume")
 		if err = found.Destroy(zfs.DestroyDefault); err != nil {
 			log.Error(err, "Failed to destroy dataset")
 			return err
