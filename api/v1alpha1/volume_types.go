@@ -27,6 +27,11 @@ type VolumeSpec struct {
 	// +kubebuilder:validation:Required
 	NodeName string `json:"nodeName,omitempty"`
 
+	// VolumeName is a ZVOL name
+	// +kubebuilder:validation:Pattern=^[-A-Za-z0-9]+(\/[-A-Za-z0-9]+)+$
+	// +kubebuilder:validation:Required
+	VolumeName string `json:"volumeName,omitempty"`
+
 	// Capacity represents the desired resources of the volume
 	// +kubebuilder:validation:Required
 	Capacity corev1.ResourceList `json:"capacity,omitempty"`

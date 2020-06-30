@@ -1,0 +1,35 @@
+name: envtest
+
+on:
+  pull_request:
+    branches:
+      - 'master'
+  push:
+    branches:
+      - 'master'
+
+jobs:
+  unit-test:
+    runs-on: ubuntu-latest
+    env:
+      DOCKER_BUILDKIT: "1"
+    steps:
+
+    -
+      # https://github.com/actions/checkout
+      name: Checkout
+      uses: actions/checkout@v2
+
+    -
+      name: UnitTest
+      uses: whoan/docker-build-with-cache-action@v5
+      with:
+        username: yuanying
+        password: "${{ secrets.GITHUB_TOKEN }}"
+        image_name: yuanying/zfs-operator/controller
+        image_tag: test
+        push_git_tag: false
+        registry: docker.pkg.github.com
+        dockerfile: Dockerfile
+        build_extra_args: "--target unit-test --platform local"
+

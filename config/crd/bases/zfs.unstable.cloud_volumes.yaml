@@ -1,6 +1,6 @@
 
 ---
-apiVersion: apiextensions.k8s.io/v1beta1
+apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
@@ -17,83 +17,87 @@ spec:
     - vol
     singular: volume
   scope: Cluster
-  subresources:
-    status: {}
-  validation:
-    openAPIV3Schema:
-      description: Volume is the Schema for the volumes API
-      properties:
-        apiVersion:
-          description: 'APIVersion defines the versioned schema of this representation
-            of an object. Servers should convert recognized schemas to the latest
-            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
-          type: string
-        kind:
-          description: 'Kind is a string value representing the REST resource this
-            object represents. Servers may infer this from the endpoint the client
-            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
-          type: string
-        metadata:
-          type: object
-        spec:
-          description: VolumeSpec defines the desired state of Volume
-          properties:
-            capacity:
-              additionalProperties:
-                anyOf:
-                - type: integer
-                - type: string
-                pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
-                x-kubernetes-int-or-string: true
-              description: Capacity represents the desired resources of the volume
-              type: object
-            nodeName:
-              description: NodeName is a node name where the volume will be placed.
-              type: string
-            properties:
-              additionalProperties:
-                type: string
-              description: Properties represents the desired zfs properties
-              type: object
-          required:
-          - capacity
-          - nodeName
-          type: object
-        status:
-          description: VolumeStatus defines the observed state of Volume
-          properties:
-            conditions:
-              description: Conditions are the current state of Volume
-              items:
-                properties:
-                  lastTransitionTime:
-                    description: LastTransitionTime is the last time the condition
-                      transitioned from one status to another.
-                    format: date-time
-                    type: string
-                  message:
-                    description: Message is human readable message about the last
-                      transition.
-                    type: string
-                  reason:
-                    description: Reason is the one-word, CamelCase reason about the
-                      last transition.
-                    type: string
-                  status:
-                    description: Status is the status of this condition.
-                    type: string
-                  type:
-                    description: Type is the type of this condition.
-                    type: string
-                type: object
-              type: array
-          type: object
-      type: object
-  version: v1alpha1
   versions:
   - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: Volume is the Schema for the volumes API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: VolumeSpec defines the desired state of Volume
+            properties:
+              capacity:
+                additionalProperties:
+                  anyOf:
+                  - type: integer
+                  - type: string
+                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                  x-kubernetes-int-or-string: true
+                description: Capacity represents the desired resources of the volume
+                type: object
+              nodeName:
+                description: NodeName is a node name where the volume will be placed.
+                type: string
+              properties:
+                additionalProperties:
+                  type: string
+                description: Properties represents the desired zfs properties
+                type: object
+              volumeName:
+                description: VolumeName is a ZVOL name
+                pattern: ^[-A-Za-z0-9]+(\/[-A-Za-z0-9]+)+$
+                type: string
+            required:
+            - capacity
+            - nodeName
+            - volumeName
+            type: object
+          status:
+            description: VolumeStatus defines the observed state of Volume
+            properties:
+              conditions:
+                description: Conditions are the current state of Volume
+                items:
+                  properties:
+                    lastTransitionTime:
+                      description: LastTransitionTime is the last time the condition
+                        transitioned from one status to another.
+                      format: date-time
+                      type: string
+                    message:
+                      description: Message is human readable message about the last
+                        transition.
+                      type: string
+                    reason:
+                      description: Reason is the one-word, CamelCase reason about
+                        the last transition.
+                      type: string
+                    status:
+                      description: Status is the status of this condition.
+                      type: string
+                    type:
+                      description: Type is the type of this condition.
+                      type: string
+                  type: object
+                type: array
+            type: object
+        type: object
     served: true
     storage: true
+    subresources:
+      status: {}
 status:
   acceptedNames:
     kind: ""

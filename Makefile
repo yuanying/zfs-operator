@@ -1,8 +1,9 @@
+# syntax = docker/dockerfile:1-experimental
 
 # Image URL to use all building/pushing image targets
-IMG ?= controller:latest
+IMG ?= yuanying/zfs-operator:latest
 # Produce CRDs that work back to Kubernetes 1.11 (no version conversion)
-CRD_OPTIONS ?= "crd:trivialVersions=true"
+CRD_OPTIONS ?= "crd:crdVersions=v1,trivialVersions=true"
 
 # Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
 ifeq (,$(shell go env GOBIN))
@@ -11,15 +12,20 @@ else
 GOBIN=$(shell go env GOBIN)
 endif
 
+PLATFORM=local
+DOCKER := DOCKER_BUILDKIT=1 docker
+
 all: manager
 
 # Run tests
 test: generate fmt vet manifests
-	go test ./... -coverprofile cover.out
+	@$(DOCKER) build . --target unit-test \
+				   --platform ${PLATFORM}
+	# go test ./... -coverprofile cover.out
 
 # Build manager binary
 manager: generate fmt vet
-	go build -o bin/manager main.go
+	go build -o bin/zfs-operator main.go
 
 # Run against the configured Kubernetes cluster in ~/.kube/config
 run: generate fmt vet manifests
@@ -56,11 +62,12 @@ generate: controller-gen
 
 # Build the docker image
 docker-build: test
-	docker build . -t ${IMG}
+	@$(DOCKER) build . --target bin -t ${IMG} \
+				   --platform ${PLATFORM}
 
 # Push the docker image
 docker-push:
-	docker push ${IMG}
+	@$(DOCKER) push ${IMG}
 
 # find or download controller-gen
 # download controller-gen if necessary
@@ -71,7 +78,7 @@ ifeq (, $(shell which controller-gen))
 	CONTROLLER_GEN_TMP_DIR=$$(mktemp -d) ;\
 	cd $$CONTROLLER_GEN_TMP_DIR ;\
 	go mod init tmp ;\
-	go get sigs.k8s.io/controller-tools/cmd/controller-gen@v0.2.5 ;\
+	go get sigs.k8s.io/controller-tools/cmd/controller-gen@v0.3.0 ;\
 	rm -rf $$CONTROLLER_GEN_TMP_DIR ;\
 	}
 CONTROLLER_GEN=$(GOBIN)/controller-gen

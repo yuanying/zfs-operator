@@ -1,5 +1,21 @@
 # Build the manager binary
-FROM golang:1.13 as builder
+
+FROM --platform=$BUILDPLATFORM ubuntu:20.04 as base
+
+ARG BUILDARCH
+RUN apt-get update && apt-get install curl -y
+
+ENV GOVERSION 1.13.12
+
+ENV PATH $PATH:/usr/local/go/bin:/usr/local/kubebuilder/bin
+
+RUN cd /tmp && curl -O https://dl.google.com/go/go${GOVERSION}.linux-${BUILDARCH}.tar.gz && \
+    tar -C /usr/local -xzf go${GOVERSION}.linux-${BUILDARCH}.tar.gz
+RUN os=$(go env GOOS) && \
+    arch=$(go env GOARCH) && \
+    curl -L https://go.kubebuilder.io/dl/2.3.1/${os}/${arch} | tar -xz -C /tmp/ && \
+    mv /tmp/kubebuilder_2.3.1_${os}_${arch} /usr/local/kubebuilder
+
 
 WORKDIR /workspace
 # Copy the Go Modules manifests
@@ -11,17 +27,31 @@ RUN go mod download
 
 # Copy the go source
 COPY main.go main.go
+COPY config/ config/
 COPY api/ api/
 COPY controllers/ controllers/
 
+FROM base as unit-test
+
+ENV CGO_ENABLED=0
+# RUN --mount=target=. \
+#     --mount=type=cache,target=/root/.cache/go-build \
+RUN go test -v ./...
+
+FROM base as builder
+ARG TARGETARCH
+
 # Build
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -a -o manager main.go
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=${TARGETARCH} GO111MODULE=on go build -a -o zfs-operator main.go
 
-# Use distroless as minimal base image to package the manager binary
-# Refer to https://github.com/GoogleContainerTools/distroless for more details
-FROM gcr.io/distroless/static:nonroot
+FROM ubuntu:20.04 as bin
+USER root
+
+RUN apt-get update && apt-get install zfsutils-linux curl -y
+
 WORKDIR /
-COPY --from=builder /workspace/manager .
-USER nonroot:nonroot
+COPY --from=builder /workspace/zfs-operator .
 
-ENTRYPOINT ["/manager"]
+EXPOSE 3260
+
+ENTRYPOINT ["/zfs-operator"]

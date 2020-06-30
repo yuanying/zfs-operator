@@ -4,7 +4,7 @@ go 1.13
 
 require (
 	github.com/go-logr/logr v0.1.0
-	github.com/mistifyio/go-zfs v2.1.1+incompatible // indirect
+	github.com/mistifyio/go-zfs v2.1.1+incompatible
 	github.com/onsi/ginkgo v1.11.0
 	github.com/onsi/gomega v1.8.1
 	k8s.io/api v0.17.2
