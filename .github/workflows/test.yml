@@ -26,7 +26,7 @@ jobs:
       with:
         username: yuanying
         password: "${{ secrets.GITHUB_TOKEN }}"
-        image_name: yuanying/zfs-operator/controller
+        image_name: yuanying/zfs-operator/zfs-test
         image_tag: test
         push_git_tag: false
         registry: docker.pkg.github.com
