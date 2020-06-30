@@ -68,7 +68,7 @@ func main() {
 		MetricsBindAddress: metricsAddr,
 		Port:               9443,
 		LeaderElection:     enableLeaderElection,
-		LeaderElectionID:   "6481f75f.unstable.cloud",
+		LeaderElectionID:   fmt.Sprintf("%s.6481f75f.unstable.cloud", nodeName),
 	})
 	if err != nil {
 		setupLog.Error(err, "unable to start manager")
