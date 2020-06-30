@@ -30,8 +30,9 @@ import (
 // VolumeReconciler reconciles a Volume object
 type VolumeReconciler struct {
 	client.Client
-	Log    logr.Logger
-	Scheme *runtime.Scheme
+	Log      logr.Logger
+	Scheme   *runtime.Scheme
+	NodeName string
 }
 
 // +kubebuilder:rbac:groups=zfs.unstable.cloud,resources=volumes,verbs=get;list;watch;create;update;patch;delete
