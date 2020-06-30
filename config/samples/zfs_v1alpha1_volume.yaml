@@ -3,5 +3,7 @@ kind: Volume
 metadata:
   name: volume-sample
 spec:
-  # Add fields here
-  foo: bar
+  nodeName: 172.18.13.124
+  volumeName: "tank/sample"
+  capacity:
+    storage: 5Gi
