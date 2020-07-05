@@ -22,14 +22,18 @@ jobs:
 
     -
       name: UnitTest
-      uses: whoan/docker-build-with-cache-action@v5
-      with:
-        username: yuanying
-        password: "${{ secrets.GITHUB_TOKEN }}"
-        image_name: yuanying/zfs-operator/zfs-test
-        image_tag: test
-        push_git_tag: false
-        registry: docker.pkg.github.com
-        dockerfile: Dockerfile
-        build_extra_args: "--target unit-test --platform local"
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y zfsutils-linux
+        sudo truncate -s 2G /disk.img
+        sudo zpool create tank /disk.img
+        sudo zfs create tank/envtest
 
+        PATH=$PATH:/usr/local/go/bin:/usr/local/kubebuilder/bin
+
+        os=$(go env GOOS)
+        arch=$(go env GOARCH)
+        curl -L https://go.kubebuilder.io/dl/2.3.1/${os}/${arch} | tar -xz -C /tmp
+        sudo mv /tmp/kubebuilder_2.3.1_${os}_${arch} /usr/local/kubebuilder
+
+        sudo go test -v ./tests/...
