@@ -17,6 +17,7 @@ limitations under the License.
 package tests
 
 import (
+	"os"
 	"path/filepath"
 	"testing"
 	"time"
@@ -46,6 +47,7 @@ var k8sManager ctrl.Manager
 var k8sClient client.Client
 var testEnv *envtest.Environment
 var testNodeName = "testnode"
+var testZfsParent = "tank/envtest"
 
 const (
 	timeout  = time.Second * 30
@@ -62,6 +64,10 @@ func TestAPIs(t *testing.T) {
 
 var _ = BeforeSuite(func(done Done) {
 	logf.SetLogger(zap.LoggerTo(GinkgoWriter, true))
+
+	if zfsParent, notEmpty := os.LookupEnv("ZFS_PARENT"); notEmpty {
+		testZfsParent = zfsParent
+	}
 
 	By("bootstrapping test environment")
 	testEnv = &envtest.Environment{
@@ -108,3 +114,9 @@ var _ = AfterSuite(func() {
 	err := testEnv.Stop()
 	Expect(err).ToNot(HaveOccurred())
 })
+
+func mustGetEnv(key string) string {
+	v := os.Getenv(key)
+	Expect(v).NotTo(BeEmpty(), "%v is required environment value", key)
+	return v
+}
