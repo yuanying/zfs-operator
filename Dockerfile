@@ -1,11 +1,11 @@
 # Build the manager binary
 
-FROM --platform=$BUILDPLATFORM ubuntu:20.04 as base
+FROM --platform=$BUILDPLATFORM ubuntu:22.04 as base
 
 ARG BUILDARCH
 RUN apt-get update && apt-get install curl -y
 
-ENV GOVERSION 1.13.12
+ENV GOVERSION 1.19.2
 
 ENV PATH $PATH:/usr/local/go/bin:/usr/local/kubebuilder/bin
 
@@ -44,7 +44,7 @@ ARG TARGETARCH
 # Build
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=${TARGETARCH} GO111MODULE=on go build -a -o zfs-operator main.go
 
-FROM ubuntu:20.04 as bin
+FROM ubuntu:22.04 as bin
 USER root
 
 RUN apt-get update && apt-get install zfsutils-linux curl -y

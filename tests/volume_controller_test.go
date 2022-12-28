@@ -20,7 +20,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/mistifyio/go-zfs"
+	"github.com/mistifyio/go-zfs/v3"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
