@@ -46,6 +46,10 @@ type VolumeReconciler struct {
 	NodeName string
 }
 
+//+kubebuilder:rbac:groups=zfs.unstable.cloud,resources=volumes,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=zfs.unstable.cloud,resources=volumes/status,verbs=get;update;patch
+//+kubebuilder:rbac:groups=zfs.unstable.cloud,resources=volumes/finalizers,verbs=update
+
 func (r *VolumeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	log := log.FromContext(ctx)
 
