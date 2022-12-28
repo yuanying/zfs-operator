@@ -4,6 +4,9 @@
     "config:base"
   ],
   "ignorePresets": ["group:kubernetes"],
+  "postUpdateOptions": [
+    "gomodTidy"
+  ],
   "packageRules": [
     {
       "groupName": "kubernetes packages",
