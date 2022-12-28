@@ -1,16 +1,8 @@
 # Build the manager binary
 
-FROM --platform=$BUILDPLATFORM ubuntu:22.04 as base
+FROM --platform=$BUILDPLATFORM golang:1.19 as base
 
 ARG BUILDARCH
-RUN apt-get update && apt-get install curl -y
-
-ENV GO_VERSION 1.19.2
-
-ENV PATH $PATH:/usr/local/go/bin:/usr/local/kubebuilder/bin
-
-RUN cd /tmp && curl -O https://dl.google.com/go/go${GO_VERSION}.linux-${BUILDARCH}.tar.gz && \
-    tar -C /usr/local -xzf go${GO_VERSION}.linux-${BUILDARCH}.tar.gz
 
 WORKDIR /workspace
 # Copy the Go Modules manifests
@@ -25,13 +17,6 @@ COPY main.go main.go
 COPY config/ config/
 COPY api/ api/
 COPY controllers/ controllers/
-
-FROM base as unit-test
-
-ENV CGO_ENABLED=0
-# RUN --mount=target=. \
-#     --mount=type=cache,target=/root/.cache/go-build \
-# RUN go test -v ./...
 
 FROM base as builder
 ARG TARGETARCH
