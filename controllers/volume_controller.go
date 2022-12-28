@@ -30,6 +30,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
+	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	zfsv1alpha1 "github.com/yuanying/zfs-operator/api/v1alpha1"
 )
@@ -41,14 +42,12 @@ const (
 // VolumeReconciler reconciles a Volume object
 type VolumeReconciler struct {
 	client.Client
-	Log      logr.Logger
 	Scheme   *runtime.Scheme
 	NodeName string
 }
 
-func (r *VolumeReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
-	ctx := context.Background()
-	log := r.Log.WithValues("volume", req.NamespacedName)
+func (r *VolumeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
+	log := log.FromContext(ctx)
 
 	vol := &zfsv1alpha1.Volume{}
 	if err := r.Get(ctx, req.NamespacedName, vol); err != nil {

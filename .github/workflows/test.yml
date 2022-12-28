@@ -18,7 +18,7 @@ jobs:
     -
       # https://github.com/actions/checkout
       name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     -
       name: UnitTest
@@ -28,12 +28,9 @@ jobs:
         sudo truncate -s 2G /disk.img
         sudo zpool create tank /disk.img
         sudo zfs create tank/envtest
+        LOCALBIN=$(pwd)/bin
+        ENVTEST=${LOCALBIN}/setup-envtest
+        ENVTEST_K8S_VERSION = 1.25.0
+        GOBIN=${LOCALBIN} go install sigs.k8s.io/controller-runtime/tools/setup-envtest@latest
 
-        PATH=$PATH:/usr/local/go/bin:/usr/local/kubebuilder/bin
-
-        os=$(go env GOOS)
-        arch=$(go env GOARCH)
-        curl -L https://go.kubebuilder.io/dl/2.3.1/${os}/${arch} | tar -xz -C /tmp
-        sudo mv /tmp/kubebuilder_2.3.1_${os}_${arch} /usr/local/kubebuilder
-
-        sudo go test -v ./tests/...
+	      sudo KUBEBUILDER_ASSETS="$(${ENVTEST} use ${ENVTEST_K8S_VERSION} --bin-dir ${LOCALBIN} -p path)" go test ./... -coverprofile cover.out

@@ -1,7 +1,16 @@
 domain: unstable.cloud
+layout:
+- go.kubebuilder.io/v3
+projectName: zfs-operator
 repo: github.com/yuanying/zfs-operator
 resources:
-- group: zfs
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: unstable.cloud
+  group: zfs
   kind: Volume
+  path: github.com/yuanying/zfs-operator/api/v1alpha1
   version: v1alpha1
-version: "2"
+version: "3"

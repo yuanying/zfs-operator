@@ -12,15 +12,10 @@ namePrefix: zfs-operator-
 #commonLabels:
 #  someName: someValue
 
-images:
-- name: controller
-  newName: yuanying/zfs-operator
-  newTag: latest
-
 bases:
 - ../crd
 - ../rbac
-- ../node
+- ../manager
 # [WEBHOOK] To enable webhook, uncomment all the sections with [WEBHOOK] prefix including the one in
 # crd/kustomization.yaml
 #- ../webhook
@@ -30,10 +25,12 @@ bases:
 #- ../prometheus
 
 patchesStrategicMerge:
-  # Protect the /metrics endpoint by putting it behind auth.
-  # If you want your zfs-node to expose the /metrics
-  # endpoint w/o any authn/z, please comment the following line.
+# Protect the /metrics endpoint by putting it behind auth.
+# If you want your controller-manager to expose the /metrics
+# endpoint w/o any authn/z, please comment the following line.
 - manager_auth_proxy_patch.yaml
+
+
 
 # [WEBHOOK] To enable webhook, uncomment all the sections with [WEBHOOK] prefix including the one in
 # crd/kustomization.yaml
@@ -51,7 +48,7 @@ vars:
 #  objref:
 #    kind: Certificate
 #    group: cert-manager.io
-#    version: v1alpha2
+#    version: v1
 #    name: serving-cert # this name should match the one in certificate.yaml
 #  fieldref:
 #    fieldpath: metadata.namespace
@@ -59,7 +56,7 @@ vars:
 #  objref:
 #    kind: Certificate
 #    group: cert-manager.io
-#    version: v1alpha2
+#    version: v1
 #    name: serving-cert # this name should match the one in certificate.yaml
 #- name: SERVICE_NAMESPACE # namespace of the service
 #  objref:

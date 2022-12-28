@@ -5,17 +5,12 @@ FROM --platform=$BUILDPLATFORM ubuntu:22.04 as base
 ARG BUILDARCH
 RUN apt-get update && apt-get install curl -y
 
-ENV GOVERSION 1.19.2
+ENV GO_VERSION 1.19.2
 
 ENV PATH $PATH:/usr/local/go/bin:/usr/local/kubebuilder/bin
 
-RUN cd /tmp && curl -O https://dl.google.com/go/go${GOVERSION}.linux-${BUILDARCH}.tar.gz && \
-    tar -C /usr/local -xzf go${GOVERSION}.linux-${BUILDARCH}.tar.gz
-RUN os=$(go env GOOS) && \
-    arch=$(go env GOARCH) && \
-    curl -L https://go.kubebuilder.io/dl/2.3.1/${os}/${arch} | tar -xz -C /tmp/ && \
-    mv /tmp/kubebuilder_2.3.1_${os}_${arch} /usr/local/kubebuilder
-
+RUN cd /tmp && curl -O https://dl.google.com/go/go${GO_VERSION}.linux-${BUILDARCH}.tar.gz && \
+    tar -C /usr/local -xzf go${GO_VERSION}.linux-${BUILDARCH}.tar.gz
 
 WORKDIR /workspace
 # Copy the Go Modules manifests
@@ -36,7 +31,7 @@ FROM base as unit-test
 ENV CGO_ENABLED=0
 # RUN --mount=target=. \
 #     --mount=type=cache,target=/root/.cache/go-build \
-RUN go test -v ./...
+# RUN go test -v ./...
 
 FROM base as builder
 ARG TARGETARCH

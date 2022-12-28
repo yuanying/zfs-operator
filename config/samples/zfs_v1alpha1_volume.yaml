@@ -1,9 +1,12 @@
 apiVersion: zfs.unstable.cloud/v1alpha1
 kind: Volume
 metadata:
+  labels:
+    app.kubernetes.io/name: volume
+    app.kubernetes.io/instance: volume-sample
+    app.kubernetes.io/part-of: zfs-operator
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: zfs-operator
   name: volume-sample
 spec:
-  nodeName: 172.18.13.124
-  volumeName: "tank/sample"
-  capacity:
-    storage: 5Gi
+  # TODO(user): Add fields here
