@@ -48,7 +48,7 @@ jobs:
         uses: docker/setup-buildx-action@v2
       -
         name: Docker Buildx (no push)
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v5
         with:
           builder: ${{ steps.buildx.outputs.name }}
           context: .
@@ -67,7 +67,7 @@ jobs:
       -
         name: Docker Buildx (push)
         if: success() && startsWith(github.ref, 'refs/tags/v')
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v5
         with:
           builder: ${{ steps.buildx.outputs.name }}
           context: .
