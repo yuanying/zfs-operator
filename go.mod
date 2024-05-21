@@ -3,7 +3,7 @@ module github.com/yuanying/zfs-operator
 go 1.19
 
 require (
-	github.com/go-logr/logr v1.2.3
+	github.com/go-logr/logr v1.4.2
 	github.com/mistifyio/go-zfs/v3 v3.0.0
 	github.com/onsi/ginkgo/v2 v2.8.0
 	github.com/onsi/gomega v1.26.0
