@@ -38,7 +38,7 @@ jobs:
       -
         # https://github.com/actions/checkout
         name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v2
